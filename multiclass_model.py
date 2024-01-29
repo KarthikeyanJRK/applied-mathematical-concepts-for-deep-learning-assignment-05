@@ -1,6 +1,7 @@
 from tensorflow.keras.datasets import mnist
 from tensorflow import keras
 from tensorflow.keras import layers
+from tensorflow.keras.layers import Dense
 import tensorflow as tf
 
 def define_dense_model_single_layer(input_length, activation_f='sigmoid', output_length=1):
@@ -9,6 +10,7 @@ def define_dense_model_single_layer(input_length, activation_f='sigmoid', output
     activation_f: the activation function
     output_length: the number of outputs (number of neurons)"""
     model = keras.Sequential()
+    model.add(Dense(output_length, input_shape=(input_length,), activation=activation_f))
     return model
 
 def define_dense_model_with_hidden_layer(input_length, 
@@ -22,6 +24,8 @@ def define_dense_model_with_hidden_layer(input_length,
     output_length: the number of outputs (number of neurons in the output layer)"""
 
     model = keras.Sequential()
+    model.add(Dense(hidden_layer_size, activation=activation_func_array[0], input_shape=(input_length,)))
+    model.add(Dense(output_length, activation=activation_func_array[1]))
     return model
 
 
@@ -40,14 +44,14 @@ def fit_mnist_model(x_train, y_train, model, epochs=2, batch_size=2):
 
     then fit the model on the training data. (pass the epochs and batch_size params)
     """
-    # model.compile  ... 
-    # model.fit ...    
+    model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
+    model.fit(x_train, y_train, epochs=epochs, batch_size=batch_size)   
     return model
   
 def evaluate_mnist_model(x_test, y_test, model):
     """Evaluate the model on the test data.
     Hint: use model.evaluate() to evaluate the model on the test data.
     """
-    loss, accuracy = None, None # model evaluate
+    loss, accuracy = model.evaluate(x_test, y_test)
     return loss, accuracy
 
